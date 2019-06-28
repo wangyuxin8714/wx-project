@@ -1,0 +1,6 @@
+<import src="/components/qqMap.vue.wxml" /><template name="e754f428">
+  <view class="_div data-v-29b1015e wrap">
+    <view class="_main data-v-29b1015e"><template data="{{...$root[$kk+'0'], $root}}" is="5b33a386"></template></view>
+    <view class="_footer data-v-29b1015e"><button type="default" class="_button data-v-29b1015e">打卡</button></view>
+  </view>
+</template>

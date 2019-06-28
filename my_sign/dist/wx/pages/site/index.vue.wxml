@@ -1,0 +1,14 @@
+<template name="7c78e845">
+  <view class="_div data-v-0c05d74d">
+    <view class="_view data-v-0c05d74d section"><label class="_span data-v-0c05d74d">北京</label> <input placeholder="面试地址" auto-focus class="_input data-v-0c05d74d" /></view>
+    <view class="_ul data-v-0c05d74d">
+      <view class="_li data-v-0c05d74d">
+        <image src="/static/images/location.svg" alt class="_img data-v-0c05d74d"></image>
+        <view class="_dl data-v-0c05d74d">
+          <view class="_dt data-v-0c05d74d">asdgfnsgdjl</view>
+          <view class="_dd data-v-0c05d74d">asdgasgdsd</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</template>

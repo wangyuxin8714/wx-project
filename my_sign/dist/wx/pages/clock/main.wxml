@@ -1,0 +1,1 @@
+<import src="/pages/clock/index.vue.wxml" /><template is="e754f428" data="{{ ...$root['0'], $root }}"/>

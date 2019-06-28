@@ -1,0 +1,13 @@
+<import src="/components/qqMap.vue.wxml" /><template name="6ad6a4a0">
+  <view class="_div data-v-67f02922 wrap">
+    <view class="_main data-v-67f02922"><template data="{{...$root[$kk+'0'], $root}}" is="5b33a386"></template></view>
+    <view class="_footer data-v-67f02922">
+      <view class="_div data-v-67f02922 location">
+        <image src="/static/images/location.png" alt class="_img data-v-67f02922"></image>
+      </view>
+      <view class="_div data-v-67f02922 my">
+        <image src="/static/images/logo.png" alt class="_img data-v-67f02922"></image>
+      </view> <button type="default" class="_button data-v-67f02922">添加面试</button>
+    </view>
+  </view>
+</template>

@@ -1,0 +1,18 @@
+<template name="6e8df3fe">
+  <view class="_div data-v-438fad86 wrap">
+    <view class="_div data-v-438fad86 pon">
+      <view class="_p data-v-438fad86">
+        <image src="/static/images/logo.png" alt class="_img data-v-438fad86"></image>
+      </view> <label class="_span data-v-438fad86">31135416354</label>
+    </view>
+    <view class="_ul data-v-438fad86">
+      <view class="_li data-v-438fad86">
+        <icon type="waiting" class="_icon data-v-438fad86"></icon> <label class="_label data-v-438fad86">我的面试</label>
+        <image src="/static/images/arrow.svg" alt class="_img data-v-438fad86"></image>
+      </view>
+    </view> <button class="_button data-v-438fad86">
+      <icon type="info" class="_icon data-v-438fad86"></icon> <label class="_label data-v-438fad86">客服中心</label>
+      <image src="/static/images/arrow.svg" alt class="_img data-v-438fad86"></image>
+    </button>
+  </view>
+</template>

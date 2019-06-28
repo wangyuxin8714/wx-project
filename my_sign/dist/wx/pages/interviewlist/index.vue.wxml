@@ -1,0 +1,14 @@
+<template name="624ab23d">
+  <view class="_div data-v-0d9f0ea2 wrap">
+    <view class="_header data-v-0d9f0ea2"><label class="_span data-v-0d9f0ea2 active">未开始</label> <label class="_span data-v-0d9f0ea2">已打卡</label> <label class="_span data-v-0d9f0ea2">已放弃</label> <label class="_span data-v-0d9f0ea2">全部</label></view>
+    <view class="_main data-v-0d9f0ea2">
+      <view class="_dl data-v-0d9f0ea2">
+        <view class="_dt data-v-0d9f0ea2">
+          <view class="_h2 data-v-0d9f0ea2">百度</view> <label class="_span data-v-0d9f0ea2">未开始</label>
+        </view>
+        <view class="_p data-v-0d9f0ea2"> 北京市海淀区东北旺西路8号 </view>
+        <view class="_dd data-v-0d9f0ea2"><label class="_span data-v-0d9f0ea2">面试时间:2019-07-04 18:50</label> <label class="_span data-v-0d9f0ea2">未提醒</label></view>
+      </view>
+    </view>
+  </view>
+</template>

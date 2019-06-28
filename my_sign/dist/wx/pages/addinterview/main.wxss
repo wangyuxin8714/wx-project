@@ -1,0 +1,56 @@
+@import "../../common/vendor.wxss";
+
+.picker.data-v-2a397074 {
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, .5);
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+.pickview.data-v-2a397074 {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+}
+._h5.data-v-2a397074 {
+  background: #f6f6f6;
+  font-size: 34rpx;
+  padding: 18rpx 20rpx;
+}
+.section_input.data-v-2a397074 {
+  display: flex;
+  font-size: 30rpx;
+  align-items: center;
+  margin: 0 30rpx;
+  height: 88rpx;
+  box-sizing: border-box;
+  border-bottom: 2rpx solid #eee;
+  position: relative;
+}
+.section_input ._span.data-v-2a397074 {
+  margin-right: 50rpx;
+}
+.section_input ._input.data-v-2a397074 {
+  flex: 1;
+}
+.section_input ._label.data-v-2a397074 {
+  flex: 1;
+}
+.section_text.data-v-2a397074 {
+  padding: 30rpx 20rpx;
+  box-sizing: border-box;
+}
+.section_text ._textarea.data-v-2a397074 {
+  border: 2rpx solid #ccc;
+  height: 200rpx;
+  padding: 10rpx;
+  box-sizing: border-box;
+  font-size: 30rpx;
+}
+._button.data-v-2a397074 {
+  margin-top: 30rpx;
+  border-radius: 0;
+  background: #999;
+  color: #fefefe;
+}
