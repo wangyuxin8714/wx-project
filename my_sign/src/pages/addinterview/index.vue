@@ -12,12 +12,16 @@
             </view>
             <view class="section_input">
                 <span>面试时间</span>
-                <label @click="getTime()">{{time}}</label>
-                <icon type="warn" color="#197DBF" size="20"/>
+                <label>
+                    <picker mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="newMultiArray">
+                        <span>{{time}}</span>
+                    </picker>
+                </label>
+                <icon @click="mask" type="warn" color="#197DBF" size="25"/>
             </view>
             <view class="section_input">
                 <span>面试地址</span>
-                <input placeholder="请选择面试地址" auto-focus/>
+                <input placeholder="请选择面试地址" auto-focus @click="goloca"/>
             </view>
         </div>
         <h5>备注信息</h5>
@@ -25,24 +29,9 @@
             <view class="section_text">
                 <textarea placeholder="备注信息(可选，100个字以内)" name="textarea"/>
             </view>
-            <button type="submit"> 确认 </button>
+            <button type="submit" @click="golist"> 确认 </button>
         </div>
-        <div v-if="flag" class="picker">
-            <div class="pickview"> 
-                <picker-view indicator-style="height: 50px;" style="width: 100%; height: 300px;" >
-                    <!-- value="{{value}}"  -->
-                    <!-- <picker-view-column>
-                        <view wx:for="{{days}}" style="line-height: 50px">{{item}}年</view>
-                    </picker-view-column>
-                    <picker-view-column>
-                        <view wx:for="{{hours}}" style="line-height: 50px">{{item}}月</view>
-                    </picker-view-column>
-                    <picker-view-column>
-                        <view wx:for="{{miuntes}}" style="line-height: 50px">{{item}}日</view>
-                    </picker-view-column> -->
-                </picker-view>
-            </div>
-        </div>
+
     </div>
 </template>
 <script>
@@ -57,49 +46,82 @@ export default {
     },
     data(){
         return {
-            flag:false
+            time: new Date().getFullYear() + "-" + (new Date().getMonth()+1>=10?new Date().getMonth()+1:"0"+(new Date().getMonth()+1)) + "-" + new Date().getDate() + " " + new Date().getHours() + ":" + new Date().getMinutes(),
+            multiArray: [],
+            multiIndex: [0, 0, 0, 0, 0]
         }
     },
     computed:{
-        ...mapState({
-            time:state=>state.index.time,
-            days:state=>state.index.days,
-            hours:state=>state.index.hours,
-            miuntes:state=>state.index.miuntes,
-        }),
+        newMultiArray: () => {
+            let array = [];
+            const date = new Date();
+            const years = [];
+            const months = [];
+            const dates = [];
+            const hours = [];
+            const minutes = [];
+            for (let i = new Date().getDate(); i <= new Date().getDate()+10; i++) {
+                dates.push(i+"号");
+            }
+            array.push(dates);
+            for (let i = 0; i < 24; i++) {
+                hours.push(i+"点");
+            }
+            let hour=hours.filter(item=>parseInt(item)>new Date().getHours())
+            array.push(hour);
+            for (let i = 0; i < 60; i+=10) {
+                minutes.push(i+"分");
+            }
+            array.push(minutes);
+            return array;
+        }
     },
     methods:{
-        
-        ...mapMutations({
-            getTimes:mutations=>mutations.index.getTimes
-        }),
-        getTime(){
-            this.flag=true
-            this.getTimes()
+        mask(){
+            wx.showToast({
+                title:'在面试前一个小时我们会通知你哦',
+                icon:"none",
+                duration: 1000
+            })
+        },
+        golist(){
+            wx.showModal({
+                title: '温馨提示',
+                content: '添加面试成功',
+                showCancel:false,
+                success: function(res) {
+                    if (res.confirm) {
+                        wx.navigateTo({url: '/pages/interviewlist/main'})
+                        // console.log('用户点击确定')
+                    }
+                }
+            })
+
+        },
+        goloca(){
+            wx.navigateTo({url: '/pages/site/main'})
+        },
+        bindMultiPickerChange(e) {
+            this.multiIndex = e.target.value;
+            const index = this.multiIndex;
+            const date = parseInt(this.newMultiArray[0][index[0]]);
+            const hour = parseInt(this.newMultiArray[1][index[1]]);
+            const minute = parseInt(this.newMultiArray[2][index[2]]);
+            console.log("当前选择的时间", date,hour,minute);
+            this.time = new Date().getFullYear() + "-" + (new Date().getMonth()+1>=10?new Date().getMonth()+1:"0"+(new Date().getMonth()+1)) + "-" + (date>10?date:"0"+date) + " " + (hour>10?hour:"0"+hour) + ":" + minute;
         }
+        
     },
     created(){
         
     },
     mounted(){
-
+        
     }
 }
 </script>
 <style scoped lang="">
-.picker{
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, .5);
-    position: fixed;
-    left: 0;
-    top: 0;
-}
-.pickview{
-    width: 100%;
-    position:fixed;
-    bottom: 0;
-}
+
 h5{
     background: #f6f6f6;
     font-size: 17px;

@@ -1,5 +1,14 @@
 <script>
+import request from "./utils/request"
+import {getAuth,getLocation} from "./utils"
+import {mapMutations} from "vuex"
+import {login} from "./services/user"
 export default {
+  methods: {
+    ...mapMutations[{
+      updateopenid:"updateopenid"
+    }]
+  },
   created () {
     // 调用API从本地缓存中获取数据
     /*
@@ -23,6 +32,27 @@ export default {
       logs.unshift(Date.now())
       mpvue.setStorageSync('logs', logs)
     }
+
+
+
+    wx.login({
+        success: async res=>{
+          console.log('res...', res);
+          let data = await login(res.code);
+          console.log(data)
+          this.updateopenid(data.data)
+          wx.setStorageSync('openid', data.data.openid);
+        }
+      })
+
+    getAuth('scope.userLocation', async ()=>{
+      let location = await getLocation();
+      wx.setStorageSync('location', location)
+      console.log('location...', location);
+    })
+
+
+
   },
   log () {
     console.log(`log at:${Date.now()}`)

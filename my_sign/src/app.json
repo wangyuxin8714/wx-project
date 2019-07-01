@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/main",
+    "pages/aaaaa/main",
     "pages/addinterview/main",
     "pages/interviewlist/main",
     "pages/listdetail/main",

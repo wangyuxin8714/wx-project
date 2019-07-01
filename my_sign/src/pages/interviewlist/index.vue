@@ -7,7 +7,7 @@
             <span>全部</span>
         </header>
         <main>
-            <dl>
+            <dl @click="godetail">
                 <dt>
                     <h2>百度</h2>
                     <span>未开始</span>
@@ -33,17 +33,19 @@ export default {
     },
     data(){
         return {
-
+            ind:0
         }
     },
     computed:{
 
     },
     methods:{
-
+        godetail(){
+            wx.navigateTo({url: '/pages/listdetail/main'})
+        }
     },
     created(){
-
+         
     },
     mounted(){
 

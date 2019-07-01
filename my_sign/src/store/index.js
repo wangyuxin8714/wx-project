@@ -1,6 +1,6 @@
 import Vue from "vue"
-import Vuex from "vuex"
-import createLogger from "vuex/dist/logger"
+import Vuex, { mapMutations } from "vuex"
+// import createLogger from "vuex/dist/logger"
 
 import index from "./modules/index"
 
@@ -11,5 +11,14 @@ export default new Vuex.Store({
     modules:{
         index
     },
-    plugins:[createLogger()]
+    state:{
+        info:{}
+    },
+    mutations:{
+        updateopenid(state,payload){
+            state.info=payload
+            console.log(state.info)
+        }
+    }
+    // plugins:[createLogger()]
 })

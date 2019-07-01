@@ -4,7 +4,10 @@
            <QQMap></QQMap>
         </main>
         <footer>
-          <button type="default">打卡</button>
+          <div class="location">
+             <img src="../../../static/images/location.png" alt="">
+           </div>
+          <button type="default" @click="godetail">打卡</button>
         </footer>
     </div>
 </template>
@@ -23,7 +26,9 @@ export default {
   },
 
   methods: {
-    
+    godetail(){
+        wx.navigateTo({url: '/pages/interviewlist/main'})      
+    }
 
   },
 
@@ -34,6 +39,19 @@ export default {
 </script>
 
 <style scoped>
+.location{
+  width: 80rpx;
+  height: 80rpx;
+  position: fixed;
+  bottom: 80px;
+  left: 10px;
+  border-radius: 50%;
+}
+
+img{
+  width: 100%;
+  height: 100%;
+}
 
 .wrap{
   width: 100%;

@@ -18,7 +18,7 @@ fly.interceptors.request.use((request) => {
   if (openid){
     request.headers['openid'] = openid;
   }
-  //给所有请求添加自定义header
+  // 给所有请求添加自定义header
   // request.headers["Cookie"] = map(cookies, (v, k) => k + '=' + v).join(';')
   //打印出请求体
   // console.log(request.body)

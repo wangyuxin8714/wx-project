@@ -11,7 +11,7 @@
             </view>
             <view class="section">
                 <span>联系方式:</span>
-                <label>13102058753</label>
+                <label @click="msg">13102058753</label>
             </view>
             <view class="section">
                 <span>是否提醒:</span>
@@ -27,8 +27,8 @@
             </view>
         </div>
         <div class="btn">
-            <button type="default">去打卡</button>
-            <button type="default">放弃面试</button>
+            <button type="default" @click="goclock">去打卡</button>
+            <button type="default" @click="godetail">放弃面试</button>
         </div>
     </div>
 </template>
@@ -49,7 +49,25 @@ export default {
 
     },
     methods:{
-
+        goclock(){
+            wx.navigateTo({url: '/pages/clock/main'})
+        },
+        godetail(){
+            wx.navigateTo({url: '/pages/interviewlist/main'})
+        },
+        msg(){
+            console.log(111111)
+            wx.showModal({
+                content: '拨打13102058753?',
+                showCancel:false,
+                success: function(res) {
+                    if (res.confirm) {
+                        // wx.navigateTo({url: '/pages/interviewlist/main'})
+                        console.log('用户点击确定')
+                    }
+                }
+            })
+        }
     },
     created(){
 

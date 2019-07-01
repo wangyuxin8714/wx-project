@@ -2,20 +2,21 @@
     <div>
         <view class="section">
             <span>北京</span>
-            <input placeholder="面试地址" auto-focus/>
+            <input placeholder="面试地址"  v-model="text" @input="nearby_search" auto-focus/>
         </view>
         <ul>
-            <li>
+            <li v-for="(item,index) in data" :key="index" @click="goaddinter">
                 <img src="../../../static/images/location.svg" alt="">
                 <dl>
-                    <dt>asdgfnsgdjl</dt>
-                    <dd>asdgasgdsd</dd>
+                    <dt>{{item.title}}</dt>
+                    <dd>{{item.address}}</dd>
                 </dl>
             </li>
         </ul>
     </div>
 </template>
 <script>
+import QQMapWX from '../../utils/qqMap';
 export default {
     props:{
 
@@ -25,17 +26,40 @@ export default {
     },
     data(){
         return {
-
+            text:"",
+            data:[]
         }
     },
     computed:{
 
     },
     methods:{
+        goaddinter(){
+            wx.navigateTo({url: '/pages/addinterview/main'})
+        },
+        nearby_search(e){
+            let qqmapsdk = new QQMapWX({
+                key: 'X7RBZ-MMOKR-UQEWJ-WSCXC-IVXVK-IFFLL'
+            });
 
+            // 调用接口
+            qqmapsdk.search({
+                keyword: e.target.value,
+                success: function (res) {
+                    console.log("res.......",res);
+                    this.data=res.data
+                },
+                fail: function (res) {
+                    console.log(res);
+                },
+                complete: function (res) {
+                    console.log("res111111");
+                }
+            })
+        }
     },
     created(){
-
+        
     },
     mounted(){
 

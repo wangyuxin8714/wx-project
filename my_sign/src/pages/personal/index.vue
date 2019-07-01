@@ -5,7 +5,7 @@
           <span>31135416354</span>
         </div>
         <ul>
-          <li>
+          <li @click="golist">
             <icon type="waiting"></icon>
             <label>我的面试</label>
             <img src="../../../static/images/arrow.svg" alt="">
@@ -33,12 +33,14 @@ export default {
   },
 
   methods: {
-    
+    golist(){
+      wx.navigateTo({url: '/pages/interviewlist/main'})
+    }
 
   },
 
   created () {
-
+    
   }
 }
 </script>
