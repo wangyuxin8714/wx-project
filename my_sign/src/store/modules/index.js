@@ -29,7 +29,7 @@ const mutations={
     },
     updateopenid(state,payload){
         state.openid={...state.openid,...payload}
-        console.log(state.openid)
+        // console.log(state.openid)
     }
 
 }

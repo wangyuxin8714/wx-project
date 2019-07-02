@@ -5,7 +5,7 @@
             <input placeholder="面试地址"  v-model="text" @input="nearby_search" auto-focus/>
         </view>
         <ul>
-            <li v-for="(item,index) in data" :key="index" @click="goaddinter">
+            <li v-for="(item,index) in list" :key="index" @click="goaddinter(index)">
                 <img src="../../../static/images/location.svg" alt="">
                 <dl>
                     <dt>{{item.title}}</dt>
@@ -17,6 +17,7 @@
 </template>
 <script>
 import QQMapWX from '../../utils/qqMap';
+import {mapMutations} from "vuex"
 export default {
     props:{
 
@@ -27,17 +28,25 @@ export default {
     data(){
         return {
             text:"",
-            data:[]
+            list:[]
         }
     },
     computed:{
 
     },
     methods:{
-        goaddinter(){
+        ...mapMutations({
+            updateaddress:"interview/updateaddress"
+        }),
+        goaddinter(ind){
+            console.log(this.list[ind].address)
+            // console.log($bus)
+            this.updateaddress(this.list[ind])
+            // $bus.$emit("address",this.list[ind].address)
             wx.navigateTo({url: '/pages/addinterview/main'})
         },
         nearby_search(e){
+            const _this = this;
             let qqmapsdk = new QQMapWX({
                 key: 'X7RBZ-MMOKR-UQEWJ-WSCXC-IVXVK-IFFLL'
             });
@@ -45,21 +54,24 @@ export default {
             // 调用接口
             qqmapsdk.search({
                 keyword: e.target.value,
+                location: '39.980014,116.313972',
                 success: function (res) {
-                    console.log("res.......",res);
-                    this.data=res.data
+                    // console.log("res.......",res);
                 },
                 fail: function (res) {
-                    console.log(res);
+                    // console.log(res);
                 },
                 complete: function (res) {
-                    console.log("res111111");
+                    // console.log("res111111",res);
+                    _this.list=res.data
+                    console.log(_this.list)
+                    // console.log("data....",this.list)
                 }
             })
         }
     },
     created(){
-        
+
     },
     mounted(){
 
@@ -114,6 +126,7 @@ dt{
 dd{
     font-size:24rpx;
     color:silver;
-
+    overflow: hidden;
+    height: 15px;
 }
 </style>

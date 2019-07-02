@@ -1,19 +1,20 @@
 <template>
     <div>
+        <form @submit="formSubmit" report-submit=true>
         <h5>面试信息</h5>
-        <div>
+        <div>    
             <view class="section_input">
                 <span>公司名称</span>
-                <input placeholder="请输入公司名称" auto-focus/>
+                <input name="input1" v-model="current.company" placeholder="请输入公司名称" />
             </view>
             <view class="section_input">
                 <span>公司电话</span>
-                <input placeholder="请输入面试联系人电话" auto-focus/>
+                <input name="input2" v-model="current.phone" placeholder="请输入面试联系人电话" />
             </view>
             <view class="section_input">
                 <span>面试时间</span>
                 <label>
-                    <picker mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="newMultiArray">
+                    <picker mode="multiSelector" @columnchange="columnChange" @change="bindMultiPickerChange" :value="multiIndex" :range="newMultiArray">
                         <span>{{time}}</span>
                     </picker>
                 </label>
@@ -21,21 +22,22 @@
             </view>
             <view class="section_input">
                 <span>面试地址</span>
-                <input placeholder="请选择面试地址" auto-focus @click="goloca"/>
+                <input name="input3" placeholder="请选择面试地址" v-model="current.address" :value="current.address.address"  @click="goloca"/>
             </view>
         </div>
         <h5>备注信息</h5>
         <div>
             <view class="section_text">
-                <textarea placeholder="备注信息(可选，100个字以内)" name="textarea"/>
+                <textarea  placeholder="备注信息(可选，100个字以内)" name="textarea"/>
             </view>
-            <button type="submit" @click="golist"> 确认 </button>
+            <button form-type="submit"> 确认 </button>
+             <!--  -->
         </div>
-
+        </form>
     </div>
 </template>
 <script>
-import {mapState, mapMutations} from "vuex"
+import {mapState, mapMutations,mapActions} from "vuex"
 
 export default {
     props:{
@@ -52,6 +54,10 @@ export default {
         }
     },
     computed:{
+        ...mapState({
+            current:state=>state.interview.current
+        }),
+        
         newMultiArray: () => {
             let array = [];
             const date = new Date();
@@ -77,6 +83,14 @@ export default {
         }
     },
     methods:{
+        ...mapActions({
+            submit:"interview/addview",
+            getview:"interview/getview"
+        }),
+        columnChange(e){
+            console.log(e)
+
+        },
         mask(){
             wx.showToast({
                 title:'在面试前一个小时我们会通知你哦',
@@ -84,19 +98,57 @@ export default {
                 duration: 1000
             })
         },
-        golist(){
-            wx.showModal({
-                title: '温馨提示',
-                content: '添加面试成功',
-                showCancel:false,
-                success: function(res) {
-                    if (res.confirm) {
-                        wx.navigateTo({url: '/pages/interviewlist/main'})
-                        // console.log('用户点击确定')
+        async formSubmit(e){
+            // console.log("e...........................",e.mp.detail.formId)
+             // 判断公司名称是否为空
+            const _this=this
+            if (!this.current.company){
+                wx.showToast({
+                    title: '请输入公司名称', //提示的内容,
+                    icon: 'none', //图标,
+                });
+                return false
+            }
+            // 判断手机号是否符合规范
+            if (!/^1(3|4|5|7|8)\d{9}$/.test(this.current.phone) || !/^(\(\d{3,4}\)|\d{3,4}-|\s)?\d{7,14}$/.test(this.current.phone)){
+                wx.showToast({
+                    title: '请输入面试联系人的手机或座机', //提示的内容,
+                    icon: 'none', //图标,
+                });
+                return false
+            }
+            // 判断公司地址
+            if (!this.current.address.address){
+                wx.showToast({
+                    title: '请选择公司地址', //提示的内容,
+                    icon: 'none', //图标,
+                });
+                return false
+            }
+            this.current.start_time=+new Date(this.time)
+            this.current.form_id=e.mp.detail.formId
+            // console.log(this.current)
+            let data=await this.submit(this.current)
+            if(data.code===0){
+                wx.showModal({
+                    title: '温馨提示',
+                    content: '添加面试成功',
+                    showCancel:false,
+                    success: function(res) {
+                        if (res.confirm) {
+                            // console.log('用户点击确定')
+                            _this.getview(-1)
+                            wx.navigateTo({url: '/pages/interviewlist/main'})
+                        }
                     }
-                }
-            })
-
+                })
+            }else{
+                wx.showModal({
+                    title: '温馨提示',
+                    content: data.msg,
+                    
+                })
+            }
         },
         goloca(){
             wx.navigateTo({url: '/pages/site/main'})
@@ -113,7 +165,9 @@ export default {
         
     },
     created(){
-        
+        // $bus.$on("address",(address)=>{
+        //     console.log(address)
+        // })
     },
     mounted(){
         

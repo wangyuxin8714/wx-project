@@ -3,22 +3,23 @@ import Vuex, { mapMutations } from "vuex"
 // import createLogger from "vuex/dist/logger"
 
 import index from "./modules/index"
+import interview from "./modules/interview"
+import update from "./modules/update"
 
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
     modules:{
-        index
+        index,
+        interview,
+        update
     },
     state:{
-        info:{}
+       
     },
     mutations:{
-        updateopenid(state,payload){
-            state.info=payload
-            console.log(state.info)
-        }
+
     }
     // plugins:[createLogger()]
 })

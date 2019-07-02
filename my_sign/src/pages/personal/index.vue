@@ -2,7 +2,7 @@
     <div class="wrap">
         <div class="pon"> 
           <p><img src="../../../static/images/logo.png" alt=""></p>
-          <span>31135416354</span>
+          <span>{{phone}}</span>
         </div>
         <ul>
           <li @click="golist">
@@ -16,32 +16,80 @@
           <label>客服中心</label>
           <img src="../../../static/images/arrow.svg" alt="">
         </button>
+        <div v-if="!hasPhone">
+          <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">获取手机号</button>
+        </div>
+        <button v-if="showSetting" open-type="openSetting">打开设置页</button>
     </div>
 </template>
 
 <script>
-
+import {encryptData} from '@/services/user'
 export default {
   data () {
     return {
-      
+      hasPhone: false,
+      showSetting: false,
+      phoneNumber: ''
     }
   },
 
   components: {
-
+    
   },
-
+  computed:{
+    phone(){
+      return this.phoneNumber=this.hasPhone?this.phoneNumber.slice(0,3)+"****"+this.phoneNumber.slice(7):"***********"
+    }
+  },
   methods: {
     golist(){
       wx.navigateTo({url: '/pages/interviewlist/main'})
-    }
+    },
+    async getPhoneNumber(e){
+      console.log('e...', e, e.target.errMsg)
+      if (e.target.errMsg != "getPhoneNumber:fail user deny"){
+        // 1.2.1 用户授权成功
+        let data = await encryptData({
+          encryptedData: e.target.encryptedData,
+          iv: e.target.iv
+        })
+        this.hasPhone = true;
+        this.phoneNumber = data.data.phoneNumber
 
+      }else{
+        // 1.2.2 用户授权失败, 打开设置页面
+        this.showSetting = true;
+      }
+    }
   },
 
   created () {
+    let that = this;
+    // 1.获取已授权状态
+    wx.getSetting({
+        success (res) {
+        console.log('auth...', res.authSetting)
+        if (res.authSetting['scope.userInfo']){
+          // 1.1 用户已经授权
+          wx.getUserInfo({
+            withCredentials: true,
+            success(res){
+              // 1.1.1 调用api获取用户信息
+              console.log("yonghu",res)
+              that.hasPhone = true;
+              console.log('userInfo...', res);
+            }
+          })
+        }else{
+          // 1.2 用户没有授权
+          that.hasPhone = false;
+        }
+      }
+    })
     
-  }
+  },
+  
 }
 </script>
 

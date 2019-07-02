@@ -3,36 +3,40 @@
         <div class="list">
             <view class="section">
                 <span>面试地址:</span>
-                <label>俺是个大叔的噶萨达嘎嘎</label>
+                <label>{{listdetail.address}}</label>
             </view>
             <view class="section">
                 <span>面试时间:</span>
-                <label>2019-06-29  20:20</label>
+                <label>{{listdetail.start_time}}</label>
             </view>
             <view class="section">
                 <span>联系方式:</span>
-                <label @click="msg">13102058753</label>
+                <label @click="msg">{{listdetail.phone}}</label>
             </view>
             <view class="section">
                 <span>是否提醒:</span>
-                <label>未提醒</label>
+                <label v-if="listdetail.remind===-1">未提醒</label>
+                <label v-if="listdetail.remind===0">已提醒</label>
             </view>
             <view class="section">
                 <span>面试状态:</span>
-                <label>未开始</label>
+                <label v-if="listdetail.status===-1">未开始</label>
+                <label v-if="listdetail.status===0">已打卡</label>
+                <label v-if="listdetail.status===1">已放弃</label>
             </view>
             <view class="section">
                 <span>取消提醒:</span>
-                <switch bindchange="switch2Change"/>
+                <switch @change="switchChange"/>
             </view>
         </div>
-        <div class="btn">
+        <div v-if="listdetail.status!==1" class="btn">
             <button type="default" @click="goclock">去打卡</button>
-            <button type="default" @click="godetail">放弃面试</button>
+            <button type="default" @click="godetail(listdetail.id)">放弃面试</button>
         </div>
     </div>
 </template>
 <script>
+import {mapState,mapActions} from "vuex"
 export default {
     props:{
 
@@ -46,17 +50,53 @@ export default {
         }
     },
     computed:{
-
+        ...mapState({
+            listdetail:state=>state.interview.listdetail
+        })
     },
     methods:{
+        ...mapActions({
+            updatedetail:"update/updatedetail",
+            getview:"interview/getview",
+        }),
+        switchChange(e){
+            if(e.mp.detail.value){
+                this.updatedetail(
+                    {
+                        id:this.listdetail.id,
+                        data:{
+                            remind:0
+                        }
+                    }
+                )
+            }else{
+                this.updatedetail(
+                    {
+                        id:this.listdetail.id,
+                        data:{
+                            remind:-1
+                        }
+                    }
+                )
+            }
+        },
         goclock(){
             wx.navigateTo({url: '/pages/clock/main'})
         },
-        godetail(){
+        godetail(id){
+            this.updatedetail(
+                {
+                    id,
+                    data:{
+                        status:1
+                    }
+                }
+            )
+            this.getview(1)
+            this.$bus.$emit("ind",2)
             wx.navigateTo({url: '/pages/interviewlist/main'})
         },
         msg(){
-            console.log(111111)
             wx.showModal({
                 content: '拨打13102058753?',
                 showCancel:false,
@@ -70,10 +110,12 @@ export default {
         }
     },
     created(){
-
+        
     },
     mounted(){
-
+        wx.setNavigationBarTitle({
+            title: this.listdetail.company
+        })
     }
 }
 </script>

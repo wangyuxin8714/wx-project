@@ -1,29 +1,39 @@
 <template>
     <div class="wrap">
         <header>
-            <span class="active">未开始</span>
-            <span>已打卡</span>
-            <span>已放弃</span>
-            <span>全部</span>
+            <span :class="{'active':ind===index}"
+                @click="tab(index)"
+                v-for="(item,index) in list" :key="index" 
+            >{{item}}</span>
+            
         </header>
-        <main>
-            <dl @click="godetail">
+        <main v-if="viewlist.length!==0">
+            <dl @click="godetail(item.id)"
+            v-for="(item,index) in viewlist" :key="index"
+            >
                 <dt>
-                    <h2>百度</h2>
-                    <span>未开始</span>
+                    <h2>{{item.company}}</h2>
+                    <span v-if="item.status===-1">未开始</span>
+                    <span v-if="item.status===0">已打卡</span>
+                    <span v-if="item.status===1">已放弃</span>
                 </dt>
                 <p>
-                    北京市海淀区东北旺西路8号
+                    {{item.address}}
                 </p>
                 <dd>
-                    <span>面试时间:2019-07-04 18:50</span>
-                    <span>未提醒</span>
+                    <span>面试时间:{{item.start_time}}</span>
+                    <span v-if="item.remind===-1">未提醒</span>
+                    <span v-if="item.remind===0">已提醒</span>
                 </dd>
             </dl>
+        </main>
+        <main v-if="viewlist.length===0" class="main">
+            当前分类还没有面试！
         </main>
     </div>
 </template>
 <script>
+import {mapState,mapActions,mapMutations} from "vuex"
 export default {
     props:{
 
@@ -33,19 +43,54 @@ export default {
     },
     data(){
         return {
-            ind:0
+            ind:0,
+            list:[
+                "未开始",
+                "已打卡",
+                "已放弃",
+                "全部"
+            ]
         }
     },
     computed:{
-
+        ...mapState({
+            viewlist:state=>state.interview.viewlist
+        })
     },
     methods:{
-        godetail(){
+        ...mapActions({
+            getview:"interview/getview",
+            getdetail:"interview/getdetail"
+        }),
+        ...mapMutations({
+            filterview:"interview/filterview"
+        }),
+        godetail(id){
+            this.getdetail(id)
+            
             wx.navigateTo({url: '/pages/listdetail/main'})
+        },
+        tab(ind){
+            this.ind=ind
+            if(ind===0){
+                this.getview(-1)
+            }
+            if(ind===1){
+                this.getview(0)
+            }
+            if(ind===2){
+                this.getview(1)
+            }
+            if(ind===3){
+                this.getview(2)
+            }
         }
     },
     created(){
-         
+        this.getview(-1)
+        this.$bus.$on("ind",(ind)=>{
+             this.ind=ind
+         })
     },
     mounted(){
 
@@ -53,6 +98,12 @@ export default {
 }
 </script>
 <style scoped lang="">
+.main{
+    padding: 40px;
+    text-align: center;
+    color: red;
+    font-size: 16px;
+}
 .wrap{
     width: 100%;
     height: 100%;
@@ -77,6 +128,8 @@ header span{
 }
 main{
     flex: 1;
+    overflow: hidden;
+    overflow-y: scroll;
 }
 dl{
     padding: 10px;
