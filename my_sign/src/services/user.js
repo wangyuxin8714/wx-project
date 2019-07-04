@@ -13,11 +13,8 @@ export let addview = data=>{
 }
 
 //获取列表
-export let getview = (status)=>{
-  if(status===2){
-    return request.get('/sign')
-  }
-  return request.get('/sign',{status})
+export let getview = (data)=>{
+  return request.get('/sign',data)
 }
 
 //获取面试详情
@@ -26,8 +23,8 @@ export let getdetail = id=>{
 }
 
 //更新面试详情
-export let updatedetail = params=>{
-  return request.put(`/sign/${params.id}`,params.data)
+export let updatedetail = (id,params)=>{
+  return request.put(`/sign/${id}`,params)
 }
 
 

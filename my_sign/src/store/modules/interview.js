@@ -1,5 +1,5 @@
 import {addview,getview,getdetail} from "../../services/user" 
-
+const moment=require("moment")
 const state={
     address:{},
     current:{
@@ -33,16 +33,18 @@ const actions={
         })
     },
     
-    getview({commit},payload){
-        getview(payload).then(res=>{
-            console.log(res)
-            commit("getview",res)
-        })
+    async getview({state,commit},payload){
+
+        let data=await getview(payload)
+        // console.log(data)
+        commit("getview",{data:data.data,page:payload.page})
+        
     },
-    getdetail({commit}, payload){
-        getdetail(payload).then(res=>{
-            console.log(res)
-            commit("getdetails",res.data)
+    async getdetail({commit}, payload){
+        return new Promise(async (resolve, reject)=>{
+            let result = await getdetail(payload);
+            commit("getdetails",result.data)
+            resolve(result);
         })
     },
 
@@ -58,17 +60,24 @@ const mutations={
         }
     },
     getview(state,payload){
-        state.viewlist=payload.data
+        if(payload.page===1){
+            state.viewlist=payload.data
+        }else{
+            state.viewlist=[...state.viewlist,...payload.data]
+        }
+        // console.log('getview',state.viewlist)
         state.viewlist.map(item=>{
-            item.address=JSON.parse(item.address).address
-            item.start_time=new Date(Number(item.start_time)).toLocaleString()
+            if(item.address.includes("{")){
+                item.address=JSON.parse(item.address).address
+                item.start_time=moment(+item.start_time).format('YYYY-MM-DD HH:mm')
+            }
         })
     },
     getdetails(state,payload){
         state.listdetail={...state.listdetail,...payload}
         state.listdetail.address=JSON.parse(state.listdetail.address).address
-        state.listdetail.start_time=new Date(Number(state.listdetail.start_time)).toLocaleString()
-        console.log(state.listdetail)
+        state.listdetail.start_time=moment(+state.listdetail.start_time).format('YYYY-MM-DD HH:mm')
+
     }
 
 

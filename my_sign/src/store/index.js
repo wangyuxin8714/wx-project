@@ -16,10 +16,13 @@ export default new Vuex.Store({
         update
     },
     state:{
-       
+       info:{}
     },
     mutations:{
-
+        updateinfo(state,payload){
+            // console.log("payload",payload)
+            state.info=payload
+        }
     }
     // plugins:[createLogger()]
 })

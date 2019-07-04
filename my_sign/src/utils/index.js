@@ -36,8 +36,11 @@ export function getAuth(scope, callback) {
     success: res => {
       // 如果已授权
       if (res.authSetting[scope]) {
+        // console.log(111111)
         callback();
       } else {
+        // console.log(222222)
+
         wx.authorize({
           scope,
           success: callback,

@@ -1,13 +1,28 @@
 <template>
     <div>
 
-        <picker mode="multiSelector" @change="bindMultiPickerChange" :value="multiIndex" :range="newMultiArray">
-            <span>当前时间：{{time}}</span>
-        </picker>
+        
+
+        <div>
+            <div class='header'>
+                <image src='/images/wx_login.png'></image>
+            </div>
+
+            <div class='content'>
+                <span>申请获取以下权限</span>
+                <text>获得你的公开信息(昵称，头像等)</text>
+            </div>
+
+            <button class='bottom' type='primary' open-type="getUserInfo" lang="zh_CN" @getuserinfo="bindGetUserInfo">
+                授权登录
+            </button>
+        </div>
+
+
+
     </div>
 </template>
 <script>
-// import {mapState, mapMutations} from "vuex"
 
 export default {
     props:{
@@ -18,53 +33,39 @@ export default {
     },
     data(){
         return {
-            hours:[],
-            time: "",
-            multiArray: [],
-            multiIndex: [0, 0, 0, 0, 0]
+
         }
     },
     computed:{
-        newMultiArray: () => {
-        let array = [];
-        const date = new Date();
-        const days = [];
-        const hours = [];
-        const minutes = [];
-        for (let i = new Date().getDate(); i <= new Date().getDate()+10; i++) {
-            days.push(i);
-        }
-        array.push(days);
-        for (let i = 0; i < 24; i++) {
-            hours.push(i);
-        }
-        this.hours=[...hours]
-        console.log(this.hours)
-        let hour=hours.filter(item=>item>new Date().getHours())
-        array.push(hour);
-
-        for (let i = 0; i < 60; i+=10) {
-            minutes.push(i);
-        }
-        array.push(minutes);
-        return array;
-        },
 
   
     },
-    methods:{
-
-        bindMultiPickerChange(e) {
-            this.multiIndex = e.target.value;
-            if(e.target.value>new Date().getDate()){
-                this.newMultiArray[1]=[...this.hours]
+    onLoad(){
+        var that = this;
+        // 查看是否授权
+        wx.getSetting({
+            success: function (res) {
+                if (res.authSetting['scope.userInfo']) {
+                    wx.getUserInfo({
+                        success: function (res) {
+                            console.log(res)
+                            //从数据库获取用户信息
+                            // that.queryUsreInfo();
+                            //用户已经授权过
+                            // wx.switchTab({
+                            //     url: '/pages/index/index'
+                            // })
+                        }
+                    });
+                }
             }
-            const index = this.multiIndex;
-            const day = this.newMultiArray[0][index[0]];
-            const hour = this.newMultiArray[1][index[1]];
-            const minute = this.newMultiArray[2][index[2]];
-            this.time = new Date().getFullYear() + "-" + (new Date().getMonth()+1) + "-" + day + " " + hour + ":" + minute;
+        })
+    },
+    methods:{
+        bindGetUserInfo(e){
+            console.log(e)
         }
+
 
         
     },
@@ -77,6 +78,35 @@ export default {
 }
 </script>
 <style scoped lang="">
+.header {
+    margin: 90rpx 0 90rpx 50rpx;
+    text-align: center;
+    width: 650rpx;
+    height: 300rpx;
+    line-height: 450rpx;
+}
+
+.header image {
+    width: 200rpx;
+    height: 200rpx;
+}
+
+.content {
+    margin-left: 50rpx;
+    margin-bottom: 90rpx;
+}
+
+.content text {
+    display: block;
+    color: #9d9d9d;
+    margin-top: 40rpx;
+}
+
+.bottom {
+    border-radius: 80rpx;
+    margin: 70rpx 50rpx;
+    font-size: 35rpx;
+}
 
 
 

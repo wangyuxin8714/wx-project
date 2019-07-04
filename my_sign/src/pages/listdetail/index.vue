@@ -24,12 +24,12 @@
                 <label v-if="listdetail.status===0">已打卡</label>
                 <label v-if="listdetail.status===1">已放弃</label>
             </view>
-            <view class="section">
+            <view v-if="listdetail.status===-1" class="section" >
                 <span>取消提醒:</span>
                 <switch @change="switchChange"/>
             </view>
         </div>
-        <div v-if="listdetail.status!==1" class="btn">
+        <div v-if="listdetail.status===-1" class="btn">
             <button type="default" @click="goclock">去打卡</button>
             <button type="default" @click="godetail(listdetail.id)">放弃面试</button>
         </div>
@@ -113,10 +113,12 @@ export default {
         
     },
     mounted(){
-        wx.setNavigationBarTitle({
-            title: this.listdetail.company
-        })
-    }
+        
+    },
+    async onShow(){
+    // 修改标题
+        wx.setNavigationBarTitle({ title: this.listdetail.company });
+    },
 }
 </script>
 <style scoped lang="">

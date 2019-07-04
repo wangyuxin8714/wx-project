@@ -10,3 +10,9 @@ Vue.config.errorHandler = function (err) {
 
 const app = new Vue(App)
 app.$mount()
+
+export default {
+  config: {
+    "enablePullDownRefresh": true,
+  }
+}

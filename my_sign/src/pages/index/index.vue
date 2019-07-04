@@ -1,17 +1,24 @@
 <template>
     <div class="wrap">
         <main>
-           <QQMap></QQMap>
+           <QQMap :reLocation="reLocation"></QQMap>
         </main>
         <footer>
-           <div class="location" @click="location">
-             <img src="../../../static/images/location.png" alt="">
-           </div>
+           
            <div class="my" @click="gopersonal">
-             <img src="../../../static/images/logo.png" alt="">
+             <!-- <img src="../../../static/images/logo.png" alt=""> -->
+             <cover-image src="/static/images/logo.png"/>
            </div>
           <button type="default" @click="goaddinter"  lang="zh_CN">添加面试</button>
         </footer>
+        <div v-if="!hasPhone" class="btn">
+          <div v-if="!showSetting" class="mask">
+              <p>为了更好的使用我们的服务，我们需要获取你的信息</p>
+              <button class='bottom btn1' type='primary' open-type="getUserInfo" lang="zh_CN" @getuserinfo="bindGetUserInfo">
+                  授权登录
+              </button>
+          </div>
+        </div>
     </div>
 </template>
 
@@ -21,29 +28,67 @@ import {mapState,mapActions} from "vuex"
 export default {
   data () {
     return {
-      
+      reLocation: false,
+      hasPhone: false,
+      showSetting: false,
     }
   },
 
   components: {
     QQMap
   },
-
+  onLoad(){
+        var that = this;
+        // 查看是否授权
+        wx.getSetting({
+            success: function (res) {
+              console.log(res)
+                if (res.authSetting['scope.userInfo']) {
+                    that.showSetting = true;
+                    wx.getUserInfo({
+                        withCredentials: true,
+                        success: function (res) {
+                            // console.log(res)
+                            let obj=JSON.parse(res.rawData)
+                            // console.log(obj)
+                            that.avatar=obj.avatarUrl
+                            // that.hasPhone = false;
+                        }
+                    });
+                }else{
+                    // 1.2 用户没有授权
+                    that.hasPhone = false;
+                }
+            }
+        })
+    },
   methods: {
-    ...mapActions({
-      getLocation:"index/getLocation"
-    }),
+    
     goaddinter(){
       wx.navigateTo({url: '/pages/addinterview/main'})
     },
     gopersonal(){
       wx.navigateTo({url: '/pages/personal/main'})
     },
-    location(){
-      this.getLocation()
-
-
-    }
+    bindGetUserInfo(e){
+        console.log("e1111",e)
+        if(e.target.errMsg==="getUserInfo:fail auth deny"){
+          wx.showToast({
+            title: '用户授权失败',
+            icon: 'none',
+            duration: 1200
+          })
+        }else{
+          wx.showToast({
+            title: '用户授权成功',
+            icon: 'none',
+            duration: 1200
+          })
+          this.hasPhone = true;
+          this.showSetting=true
+          this.avatar=e.target.userInfo.avatarUrl
+        }
+    },
     
   },
 
@@ -54,14 +99,41 @@ export default {
 </script>
 
 <style scoped>
-.location{
-  width: 80rpx;
-  height: 80rpx;
+.btn{
+  width: 100%;
+  height: 100%;
   position: fixed;
-  bottom: 80px;
-  left: 10px;
-  border-radius: 50%;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,.3);
 }
+.mask{
+  width:70%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.mask p{
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 5px;
+  font-size: 17px;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+button.btn1{
+  width: 100%;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  background:#197dbf !important;
+  color:#fff;
+  border-radius:0 0 10px 10px;
+}
+
+
+
 
 .my{
   width: 80rpx;

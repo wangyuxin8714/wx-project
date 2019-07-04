@@ -6,33 +6,33 @@ import {login} from "./services/user"
 export default {
   methods: {
     ...mapMutations({
-      updateopenid:"index/updateopenid"
+      updateopenid:"index/updateopenid",
+      updateinfo:"updateinfo"
     })
   },
   created () {
 
     wx.login({
         success: async res=>{
-          console.log('res...', res);
+          // console.log('res...', res);
           let data = await login(res.code);
-          console.log(data)
+          // console.log(data)
           this.updateopenid(data.data)
+          this.updateinfo(data.data)
           wx.setStorageSync('openid', data.data.openid);
         }
       })
 
-    getAuth('scope.userLocation', async ()=>{
-      let location = await getLocation();
-      wx.setStorageSync('location', location)
-      console.log('location...', location);
-    })
+    // getAuth('scope.userLocation', async ()=>{
+    //   let location = await getLocation();
+    //   wx.setStorageSync('location', location)
+    //   // console.log('location...', location);
+    // })
 
 
 
   },
-  log () {
-    console.log(`log at:${Date.now()}`)
-  }
+
 }
 </script>
 
@@ -41,11 +41,12 @@ export default {
   margin: 0;
   padding: 0;
 }
+
 html,body{
   width: 100%;
   height: 100%;
-  overflow: hidden;
 }
+
 .container {
   height: 100%;
   display: flex;

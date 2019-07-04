@@ -39,7 +39,7 @@ export default {
             updateaddress:"interview/updateaddress"
         }),
         goaddinter(ind){
-            console.log(this.list[ind].address)
+            // console.log(this.list[ind].address)
             // console.log($bus)
             this.updateaddress(this.list[ind])
             // $bus.$emit("address",this.list[ind].address)
@@ -64,7 +64,7 @@ export default {
                 complete: function (res) {
                     // console.log("res111111",res);
                     _this.list=res.data
-                    console.log(_this.list)
+                    // console.log(_this.list)
                     // console.log("data....",this.list)
                 }
             })

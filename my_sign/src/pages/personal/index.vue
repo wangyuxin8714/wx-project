@@ -1,7 +1,8 @@
 <template>
     <div class="wrap">
         <div class="pon"> 
-          <p><img src="../../../static/images/logo.png" alt=""></p>
+          <p><img :src="avatar" alt=""></p>
+          <!-- <p><img src="../../../static/images/logo.png" alt=""></p> -->
           <span>{{phone}}</span>
         </div>
         <ul>
@@ -11,15 +12,23 @@
             <img src="../../../static/images/arrow.svg" alt="">
           </li>
         </ul>
-        <button>
+        <button @click="godialogue">
           <icon type="info"></icon>
           <label>客服中心</label>
           <img src="../../../static/images/arrow.svg" alt="">
         </button>
-        <div v-if="!hasPhone">
-          <button open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">获取手机号</button>
+        <div v-if="!hasPhone" class="btn">
+          <div v-if="showSetting" class="mask">
+            <p>为了更好的使用我们的服务，我们需要获取你的手机号码</p>
+            <button class="btn1"  open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">同意</button>
+          </div>
+          <div v-if="!showSetting" class="mask">
+              <p>为了更好的使用我们的服务，我们需要获取你的信息</p>
+              <button class='bottom btn1' type='primary' open-type="getUserInfo" lang="zh_CN" @getuserinfo="bindGetUserInfo">
+                  授权登录
+              </button>
+          </div>
         </div>
-        <button v-if="showSetting" open-type="openSetting">打开设置页</button>
     </div>
 </template>
 
@@ -30,7 +39,8 @@ export default {
     return {
       hasPhone: false,
       showSetting: false,
-      phoneNumber: ''
+      phoneNumber: '',
+      avatar:""
     }
   },
 
@@ -42,9 +52,61 @@ export default {
       return this.phoneNumber=this.hasPhone?this.phoneNumber.slice(0,3)+"****"+this.phoneNumber.slice(7):"***********"
     }
   },
+  onLoad(){
+        var that = this;
+        // 查看是否授权
+        wx.getSetting({
+            success: function (res) {
+              console.log(res)
+                if (res.authSetting['scope.userInfo']) {
+                    that.showSetting = true;
+                    wx.getUserInfo({
+                        withCredentials: true,
+                        success: function (res) {
+                            // console.log(res)
+                            let obj=JSON.parse(res.rawData)
+                            // console.log(obj)
+                            that.avatar=obj.avatarUrl
+                            that.hasPhone = false;
+                        }
+                    });
+                }else{
+                    // 1.2 用户没有授权
+                    that.hasPhone = false;
+                }
+            }
+        })
+    },
   methods: {
+    godialogue(){
+      wx.showModal({
+        title: '模拟进入客服会话',
+        content: '开发者工具暂不支持打开客服会话，请使用真机调试',
+        showCancel:false,
+        confirmText:"返回",
+        confirmColor:"#ca654s",
+      })
+    },
     golist(){
       wx.navigateTo({url: '/pages/interviewlist/main'})
+    },
+    bindGetUserInfo(e){
+        console.log("e1111",e)
+        if(e.target.errMsg==="getUserInfo:fail auth deny"){
+          wx.showToast({
+            title: '用户授权失败',
+            icon: 'none',
+            duration: 1200
+          })
+        }else{
+          wx.showToast({
+            title: '用户授权成功',
+            icon: 'none',
+            duration: 1200
+          })
+          this.showSetting=true
+          this.avatar=e.target.userInfo.avatarUrl
+        }
     },
     async getPhoneNumber(e){
       console.log('e...', e, e.target.errMsg)
@@ -54,39 +116,48 @@ export default {
           encryptedData: e.target.encryptedData,
           iv: e.target.iv
         })
+        wx.showToast({
+          title: '绑定手机号成功',
+          icon: 'success',
+          duration: 1500
+        })
         this.hasPhone = true;
+        this.showSetting = false;
         this.phoneNumber = data.data.phoneNumber
 
       }else{
-        // 1.2.2 用户授权失败, 打开设置页面
-        this.showSetting = true;
+        wx.showToast({
+          title: '绑定手机号失败',
+          icon: 'none',
+          duration: 1500
+        })
       }
     }
   },
 
   created () {
-    let that = this;
-    // 1.获取已授权状态
-    wx.getSetting({
-        success (res) {
-        console.log('auth...', res.authSetting)
-        if (res.authSetting['scope.userInfo']){
-          // 1.1 用户已经授权
-          wx.getUserInfo({
-            withCredentials: true,
-            success(res){
-              // 1.1.1 调用api获取用户信息
-              console.log("yonghu",res)
-              that.hasPhone = true;
-              console.log('userInfo...', res);
-            }
-          })
-        }else{
-          // 1.2 用户没有授权
-          that.hasPhone = false;
-        }
-      }
-    })
+    // let that = this;
+    // // 1.获取已授权状态
+    // wx.getSetting({
+    //     success (res) {
+    //     console.log('auth...',res)
+    //     if (res.authSetting['scope.userInfo']){
+    //       // 1.1 用户已经授权
+    //       wx.getUserInfo({
+    //         withCredentials: true,
+    //         success(res){
+    //           // 1.1.1 调用api获取用户信息
+    //           // console.log("yonghu",res)
+    //           that.hasPhone = true;
+    //           // console.log('userInfo...', res);
+    //         }
+    //       })
+    //     }else{
+    //       // 1.2 用户没有授权
+    //       that.hasPhone = false;
+    //     }
+    //   }
+    // })
     
   },
   
@@ -94,7 +165,38 @@ export default {
 </script>
 
 <style scoped>
-
+.btn{
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background: rgba(0,0,0,.3);
+}
+.mask{
+  width:70%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.mask p{
+  background: #fff;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 5px;
+  font-size: 17px;
+  box-sizing: border-box;
+  line-height: 1.5;
+}
+button.btn1{
+  width: 100%;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  background:#197dbf !important;
+  color:#fff;
+  border-radius:0 0 10px 10px;
+}
 .wrap{
   width: 100%;
   height: 100%;
@@ -118,12 +220,13 @@ export default {
   height:100rpx;
   background:#fff;
   text-align:center;
-  padding:20rpx;
+  /* padding:20rpx; */
   border-radius:50%;
+  overflow: hidden;
 }
 .pon p img{
-  width:90%;
-  height:90%
+  width:100%;
+  height:100%
 }
 ul li{
   width:100%;
