@@ -7,7 +7,8 @@ export default {
   methods: {
     ...mapMutations({
       updateopenid:"index/updateopenid",
-      updateinfo:"updateinfo"
+      updateinfo:"updateinfo",
+      updateLocation:"index/updateLocation"
     })
   },
   created () {
@@ -23,11 +24,12 @@ export default {
         }
       })
 
-    // getAuth('scope.userLocation', async ()=>{
-    //   let location = await getLocation();
-    //   wx.setStorageSync('location', location)
-    //   // console.log('location...', location);
-    // })
+    getAuth('scope.userLocation', async ()=>{
+      let location = await getLocation();
+      this.updateLocation(location)
+      wx.setStorageSync('location', location)
+      // console.log('location...', location);
+    })
 
 
 

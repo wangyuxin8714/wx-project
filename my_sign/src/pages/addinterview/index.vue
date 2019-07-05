@@ -40,10 +40,9 @@
       <h5>备注信息</h5>
       <div>
         <view class="section_text">
-          <textarea placeholder="备注信息(可选，100个字以内)" name="textarea" />
+          <textarea v-model="current.description" placeholder="备注信息(可选，100个字以内)" name="textarea" />
         </view>
         <button form-type="submit">确认</button>
-        <!--  -->
       </div>
     </form>
   </div>
@@ -84,7 +83,6 @@ export default {
     newDate: () => {
       let dates = [];
       const date = new Date();
-
       for (let i = new Date().getDate(); i <= new Date().getDate() + 9; i++) {
         dates.push(i + "号");
       }

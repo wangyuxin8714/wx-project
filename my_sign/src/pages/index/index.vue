@@ -6,13 +6,12 @@
         <footer>
            
            <div class="my" @click="gopersonal">
-             <!-- <img src="../../../static/images/logo.png" alt=""> -->
              <cover-image src="/static/images/logo.png"/>
            </div>
           <button type="default" @click="goaddinter"  lang="zh_CN">添加面试</button>
         </footer>
         <div v-if="!hasPhone" class="btn">
-          <div v-if="!showSetting" class="mask">
+          <div class="mask">
               <p>为了更好的使用我们的服务，我们需要获取你的信息</p>
               <button class='bottom btn1' type='primary' open-type="getUserInfo" lang="zh_CN" @getuserinfo="bindGetUserInfo">
                   授权登录
@@ -25,6 +24,9 @@
 <script>
 import QQMap from "@/components/qqMap"
 import {mapState,mapActions} from "vuex"
+
+import {encryptData} from '@/services/user'
+
 export default {
   data () {
     return {
@@ -42,17 +44,14 @@ export default {
         // 查看是否授权
         wx.getSetting({
             success: function (res) {
-              console.log(res)
+              // console.log(res)
                 if (res.authSetting['scope.userInfo']) {
-                    that.showSetting = true;
+                    that.hasPhone = true;
                     wx.getUserInfo({
                         withCredentials: true,
                         success: function (res) {
-                            // console.log(res)
                             let obj=JSON.parse(res.rawData)
-                            // console.log(obj)
                             that.avatar=obj.avatarUrl
-                            // that.hasPhone = false;
                         }
                     });
                 }else{
@@ -70,8 +69,7 @@ export default {
     gopersonal(){
       wx.navigateTo({url: '/pages/personal/main'})
     },
-    bindGetUserInfo(e){
-        console.log("e1111",e)
+    async bindGetUserInfo(e){
         if(e.target.errMsg==="getUserInfo:fail auth deny"){
           wx.showToast({
             title: '用户授权失败',
@@ -85,7 +83,6 @@ export default {
             duration: 1200
           })
           this.hasPhone = true;
-          this.showSetting=true
           this.avatar=e.target.userInfo.avatarUrl
         }
     },

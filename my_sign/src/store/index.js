@@ -5,6 +5,7 @@ import Vuex, { mapMutations } from "vuex"
 import index from "./modules/index"
 import interview from "./modules/interview"
 import update from "./modules/update"
+import personal from "./modules/personal"
 
 
 Vue.use(Vuex)
@@ -13,7 +14,8 @@ export default new Vuex.Store({
     modules:{
         index,
         interview,
-        update
+        update,
+        personal
     },
     state:{
        info:{}

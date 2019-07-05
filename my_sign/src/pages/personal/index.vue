@@ -17,6 +17,11 @@
           <label>客服中心</label>
           <img src="../../../static/images/arrow.svg" alt="">
         </button>
+        <button @click="authenticates">
+          <icon type="info"></icon>
+          <label>生物认证</label>
+          <img src="../../../static/images/arrow.svg" alt="">
+        </button>
         <div v-if="!hasPhone" class="btn">
           <div v-if="showSetting" class="mask">
             <p>为了更好的使用我们的服务，我们需要获取你的手机号码</p>
@@ -33,6 +38,7 @@
 </template>
 
 <script>
+import {mapActions} from "vuex"
 import {encryptData} from '@/services/user'
 export default {
   data () {
@@ -57,7 +63,6 @@ export default {
         // 查看是否授权
         wx.getSetting({
             success: function (res) {
-              console.log(res)
                 if (res.authSetting['scope.userInfo']) {
                     that.showSetting = true;
                     wx.getUserInfo({
@@ -78,6 +83,42 @@ export default {
         })
     },
   methods: {
+    ...mapActions({
+      authenticate:"personal/authenticate"
+    }),
+    async authenticates(){
+      const that=this;
+      wx.startSoterAuthentication({
+        requestAuthModes: ['fingerPrint'],
+        challenge: 'helloworld',
+        authContent: '请用指纹解锁',
+        success(res) {
+          console.log('res...', res);
+          let data = that.authenticate({
+            openid:wx.getStorageSync('openid'),
+            json_string:res.resultJSON,
+            json_signature:res.resultJSONSignature
+          })
+          console.log("data",data)
+          if(data.code===0){
+            wx.showToast({
+              title: '指纹验证成功',
+              icon: 'none',
+              duration: 1200
+            })
+          }else{
+            wx.showToast({
+              title: '指纹验证失败',
+              icon: 'none',
+              duration: 1200
+            })
+          }
+        },
+        fail(err) {
+          console.log('err...', err);
+        }
+      })
+    },
     godialogue(){
       wx.showModal({
         title: '模拟进入客服会话',
@@ -91,7 +132,6 @@ export default {
       wx.navigateTo({url: '/pages/interviewlist/main'})
     },
     bindGetUserInfo(e){
-        console.log("e1111",e)
         if(e.target.errMsg==="getUserInfo:fail auth deny"){
           wx.showToast({
             title: '用户授权失败',

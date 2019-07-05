@@ -8,6 +8,7 @@
             subkey="X7RBZ-MMOKR-UQEWJ-WSCXC-IVXVK-IFFLL"
             show-location 
             show-compass
+            :polyline="polyline"
             :circles="circle"
             :include-points="points"
             :markers="markers"
@@ -17,7 +18,6 @@
         </map>
         <div class="location" @click="goCurrent">
              <cover-image class="location" @click="goCurrent" src="/static/images/location.png" />
-             <!-- <img src="../../static/images/location.png" alt=""> -->
         </div>
     </div>
 </template>
@@ -26,7 +26,7 @@ import QQMapWX from '@/utils/qqMap'
 import {mapState,mapMutations,mapActions} from "vuex"
 import {getLocation,getAuth} from "../utils/index"
 import getDistance from '@/utils/distance.js'
-
+var coors;
 export default {
     props:{
         reLocation: {
@@ -55,16 +55,42 @@ export default {
         },
     data(){
         return {
-            longitude:40.03298,
-            latitude:116.29891,
-            distance: 0
+            distance: 0,
+            polyline:[]
         }
     },
+    onLoad(){   
+        var that =this;
+        if(!this.markers.length){
+            return
+        }  
+        wx.request({          
+        url:"https://apis.map.qq.com/ws/direction/v1/driving/?from="+this.latitude+","+this.longitude+"&to="+this.markers[0].latitude+","+this.markers[0].longitude+"&output=json&callback=cb&key=X7RBZ-MMOKR-UQEWJ-WSCXC-IVXVK-IFFLL",
+        success:function(res){  
+            // console.log("res....",res)             
+            coors = res.data.result.routes[0].polyline   
+            that.$bus.$emit("courses",res.data.result.routes[0].steps)     
+            for(var i=2; i< coors.length; i++) {                    
+                coors[i]= coors[i-2]+ coors[i]/1000000              
+            }                      
+            //划线            
+            var b=[];              
+            for(var i=0; i< coors.length; i=i+2) {                 
+                b[i/2]={latitude: coors[i],longitude:coors[i+1]};                            
+            }            
+            that.polyline= [{points: b,                        
+                color:"#99FF00",                        
+                width:5,                        
+                dottedLine:false                    
+            }]   
+        }  
+    }) 
+    },
     computed:{
-        // ...mapState({
-        //     longitude:state=>state.index.longitude,
-        //     latitude:state=>state.index.latitude
-        // }),
+        ...mapState({
+            longitude:state=>state.index.longitude,
+            latitude:state=>state.index.latitude
+        }),
         points(){
             return [this.longitude,this.latitude, ...this.markers]
         },
@@ -73,11 +99,11 @@ export default {
                 return []
             }else{
                 return [{
-                ...this.markers[0],
-                color:  this.distance>100?'#C9394A': '#197DBF',
-                fillColor: 'rgba(0,0,0, .3)',
-                radius: 100,
-                strokeWidth: 2
+                    ...this.markers[0],
+                    color:  this.distance>100?'#C9394A': '#197DBF',
+                    fillColor: 'rgba(0,0,0, .3)',
+                    radius: 10,
+                    strokeWidth: 2
                 }]
             }
         }
@@ -89,31 +115,27 @@ export default {
         }
     },
     methods:{
-        // ...mapActions({
-        //     getLocation: 'index/getLocation'
-        // }),
         ...mapMutations({
             updateLocation:"index/updateLocation"
         }),
         
         goCurrent(){
+            // console.log("marker",this.markers)
             const that=this
             getAuth('scope.userLocation', async ()=>{
                 let location = await getLocation();
                 // console.log("location....",location)
                 this.location = location;
-                that.longitude=1,
-                that.latitude=2
-                that.longitude=location.longitude,
-                that.latitude=location.latitude
-                // console.log(that.longitude,that.latitude)
+                this.updateLocation({longitude:1,latitude:1})
+                this.updateLocation(location)
                 // console.log('scope.userLocation...', this.location, this.markers[0]);
                 // 重新计算距离
-                if (this.updateDistance){
+                if (this.updateDistance){   
                     this.distance = getDistance(this.location.latitude, this.location.longitude, this.markers[0].latitude, this.markers[0].longitude)
                     this.updateDistance(this.distance)
                 }
-            })
+            })     
+            
         }
     },
     created(){
@@ -121,7 +143,6 @@ export default {
             key: 'X7RBZ-MMOKR-UQEWJ-WSCXC-IVXVK-IFFLL'
         });
 
-        // this.getLocation();
     },
     mounted(){
         this.goCurrent();

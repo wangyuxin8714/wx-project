@@ -32,3 +32,8 @@ export let updatedetail = (id,params)=>{
 export let encryptData = params=>{
   return request.post('/user/decrypt', params)
 }
+
+// 生物验证
+export let authenticate = params=>{
+  return request.post('/user/fingerPrint', params)
+}

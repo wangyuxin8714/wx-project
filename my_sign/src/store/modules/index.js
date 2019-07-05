@@ -13,7 +13,6 @@ const actions={
         wx.getLocation({
             type: 'wgs84',
             success (res) {
-                // console.log(res)
                 commit('updateLocation', res)
             }
         })
@@ -24,6 +23,7 @@ const actions={
 //同步
 const mutations={
     updateLocation(state, payload){
+        
         state.longitude = payload.longitude
         state.latitude = payload.latitude
     },
