@@ -131,7 +131,10 @@ export default {
                 // console.log('scope.userLocation...', this.location, this.markers[0]);
                 // 重新计算距离
                 if (this.updateDistance){   
-                    this.distance = getDistance(this.location.latitude, this.location.longitude, this.markers[0].latitude, this.markers[0].longitude)
+                    this.distance = getDistance(this.location.latitude, 
+                                                this.location.longitude, 
+                                                this.markers[0].latitude, 
+                                                this.markers[0].longitude)
                     this.updateDistance(this.distance)
                 }
             })     

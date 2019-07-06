@@ -93,26 +93,12 @@ export default {
         challenge: 'helloworld',
         authContent: '请用指纹解锁',
         success(res) {
-          console.log('res...', res);
-          let data = that.authenticate({
+          // console.log('res...', res);
+          that.authenticate({
             openid:wx.getStorageSync('openid'),
             json_string:res.resultJSON,
             json_signature:res.resultJSONSignature
           })
-          console.log("data",data)
-          if(data.code===0){
-            wx.showToast({
-              title: '指纹验证成功',
-              icon: 'none',
-              duration: 1200
-            })
-          }else{
-            wx.showToast({
-              title: '指纹验证失败',
-              icon: 'none',
-              duration: 1200
-            })
-          }
         },
         fail(err) {
           console.log('err...', err);
